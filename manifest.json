@@ -1,0 +1,20 @@
+{
+  "name": "Elisha Lene Institute",
+  "short_name": "ELI",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F4F7F6",
+  "theme_color": "#008751",
+  "icons": [
+    {
+      "src": "https://ui-avatars.com/api/?name=ELI&background=008751&color=fff&size=192",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://ui-avatars.com/api/?name=ELI&background=008751&color=fff&size=512",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
