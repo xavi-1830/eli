@@ -483,12 +483,15 @@
 </nav>
 
 <script>
-    // PAGE NAVIGATION LOGIC
+    <script>
+    // --- 1. GLOBAL PAGE NAVIGATION ---
     function showPage(pageId, navElement) {
         // Hide all pages
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        
         // Show target page
-        document.getElementById(pageId).classList.add('active');
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) targetPage.classList.add('active');
         
         // Update Bottom Nav UI
         if (navElement) {
@@ -496,71 +499,16 @@
             navElement.classList.add('active');
         }
 
-        // Show/Hide Prof Alex Contextually (Only on Lecture Screen)
+        // Contextual Prof Alex (Only shows on Lecture Screen)
         const botTrigger = document.getElementById('alex-fab');
-        botTrigger.style.display = (pageId === 'lecture-screen') ? 'flex' : 'none';
+        if(botTrigger) {
+            botTrigger.style.display = (pageId === 'lecture-screen') ? 'flex' : 'none';
+        }
 
         window.scrollTo(0, 0);
     }
 
-        // LIVE SYNC FROM ADMIN
-    function liveSync(){
-      const fee = localStorage.getItem('eli_fees_elizabeth');
-      if(fee){
-        const bar = document.getElementById('fees-fill');
-        const msg = document.getElementById('fees-msg');
-        if(bar){
-          bar.style.width = fee + '%';
-          bar.style.background = fee=='100' ? '#008751' : '#FFD700';
-        }
-        if(msg){
-          msg.innerHTML = fee=='100' ? '✓ Verified: All Weeks Unlocked' : '<i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.';
-          msg.style.color = fee=='100' ? '#008751' : '#D2122E';
-        }
-      }
-      const anns = JSON.parse(localStorage.getItem('eli_announcements')||'[]');
-      const container = document.getElementById('ann-container');
-      if(anns.length > 0 && container){
-          container.innerHTML = anns.slice(0,3).map(a=>{
-            let color = a.type==='school' ? '#D2122E' : a.type==='course' ? '#008751' : '#B45309';
-            return `<div style="display:flex; gap:10px; margin-bottom:10px; border-left:3px solid ${color}; padding-left:8px;"><p style="font-size:0.75rem;"><b style="color:${color}">[${a.type.toUpperCase()}]</b> ${a.msg}</p></div>`
-          }).join('');
-      }
-    }
-    
-    // Start the sync engine
-    setInterval(liveSync, 1500);
-    liveSync();
-// LIVE SYNC FROM ADMIN
-function liveSync(){
-  const fee = localStorage.getItem('eli_fees_elizabeth');
-  if(fee){
-    const bar = document.getElementById('fees-fill');
-    const msg = document.getElementById('fees-msg');
-    if(bar){
-      bar.style.width = fee + '%';
-      bar.style.background = fee=='100' ? '#008751' : '#FFD700';
-    }
-    if(msg){
-      msg.innerHTML = fee=='100' ? '✓ Verified: All Weeks Unlocked' : '<i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.';
-      msg.style.color = fee=='100' ? '#008751' : '#D2122E';
-    }
-  }
-  const anns = JSON.parse(localStorage.getItem('eli_announcements')||'[]');
-  if(anns.length>0){
-    const container = document.getElementById('ann-container');
-    if(container){
-      container.innerHTML = anns.slice(0,3).map(a=>{
-        let color = a.type==='school' ? '#D2122E' : a.type==='course' ? '#008751' : '#B45309';
-        return `<div style="display:flex; gap:10px; margin-bottom:10px; border-left:3px solid ${color}; padding-left:8px;"><p style="font-size:0.75rem;"><b style="color:${color}">[${a.type.toUpperCase()}]</b> ${a.msg}</p></div>`
-      }).join('');
-    }
-  }
-}
-setInterval(liveSync, 1500);
-liveSync();
-    
-    // COURSE FILTERING
+    // --- 2. COURSE & LECTURE LOGIC ---
     function filterCourses() {
         const query = document.getElementById('courseSearch').value.toLowerCase();
         const cards = document.querySelectorAll('.course-card');
@@ -570,14 +518,25 @@ liveSync();
         });
     }
 
-    // LECTURE OPENER
     function openLecture(course, topic) {
         document.getElementById('active-course-name').innerText = course;
         document.getElementById('active-topic-name').innerText = "Topic: " + topic;
         showPage('lecture-screen');
     }
 
-    // CHATBOT LOGIC (Optimized)
+    // --- 3. RESULTS TIME-MACHINE LOGIC ---
+    function updateHistory() {
+        const container = document.querySelector('#result-screen .card');
+        if(container) {
+            container.style.opacity = '0.5';
+            setTimeout(() => { container.style.opacity = '1'; }, 300);
+        }
+    }
+
+    // --- 4. RECEIPT & NOTIFICATION LOGIC ---
+    function showReceipt() { showPage('receipt-screen'); }
+
+    // --- 5. OPTIMIZED CHATBOT (PROF ALEX) ---
     function toggleChat(show) {
         document.getElementById('chat-overlay').style.display = show ? 'flex' : 'none';
     }
@@ -588,7 +547,7 @@ liveSync();
         const typing = document.getElementById('typing');
 
         if (input.value.trim() !== "") {
-            // Instant Message (UX Optimization)
+            // Instant User Feedback
             const uMsg = document.createElement('div');
             uMsg.className = "msg msg-user";
             uMsg.innerHTML = `<span class="msg-name" style="color: white">YOU</span>${input.value}`;
@@ -598,39 +557,67 @@ liveSync();
             input.value = "";
             stream.scrollTop = stream.scrollHeight;
 
-            // Simulated Prof Alex Typing
+            // Typing Indicator
             setTimeout(() => {
-                typing.style.display = "block";
+                if(typing) typing.style.display = "block";
                 stream.scrollTop = stream.scrollHeight;
             }, 600);
 
+            // Simulated AI Response
             setTimeout(() => {
-                typing.style.display = "none";
+                if(typing) typing.style.display = "none";
                 const bMsg = document.createElement('div');
                 bMsg.className = "msg msg-bot";
-                bMsg.innerHTML = `<span class="msg-name">PROF. ALEX</span>Good question, Elizabeth. For "${text}", refer to Section 4 of the cardiac manual.`;
+                bMsg.innerHTML = `<span class="msg-name">PROF. ALEX</span>Good question, Elizabeth. For "${text}", we should look at the clinical guidelines for Nursing 300L.`;
                 stream.appendChild(bMsg);
                 stream.scrollTop = stream.scrollHeight;
             }, 2000);
         }
     }
 
-    // RECEIPT LOGIC
-    function showReceipt() { showPage('receipt-screen'); }
+    // --- 6. LIVE SYNC ENGINE (Links to Admin) ---
+    function runSync() {
+        // A. Sync Fees
+        const feeStatus = localStorage.getItem('eli_fees'); 
+        const bar = document.getElementById('fees-fill');
+        const msg = document.getElementById('fees-msg');
 
-    // RESULTS MOCK REFRESH
-    function updateHistory() {
-        // Just a UI flicker to simulate loading
-        const container = document.querySelector('#result-screen .card');
-        container.style.opacity = '0.5';
-        setTimeout(() => { container.style.opacity = '1'; }, 300);
+        if (feeStatus === '100') {
+            if(bar) { bar.style.width = '100%'; bar.style.backgroundColor = '#008751'; }
+            if(msg) { 
+                msg.innerHTML = '✓ Verified: All Weeks Unlocked'; 
+                msg.style.color = '#008751'; 
+            }
+        } else {
+            if(bar) { bar.style.width = '75%'; bar.style.backgroundColor = '#FFD700'; }
+            if(msg) { 
+                msg.innerHTML = '<i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.'; 
+                msg.style.color = '#D2122E'; 
+            }
+        }
+
+        // B. Sync Announcements
+        const rawAnn = localStorage.getItem('eli_announcements');
+        const container = document.getElementById('ann-container');
+        if (rawAnn && container) {
+            const anns = JSON.parse(rawAnn);
+            container.innerHTML = anns.slice(0, 3).map(a => {
+                let color = (a.type === 'school') ? '#D2122E' : (a.type === 'course') ? '#008751' : '#B45309';
+                return `
+                    <div style="margin-bottom:12px; border-left:4px solid ${color}; padding-left:12px; background:#f9f9f9; padding:8px; border-radius:0 8px 8px 0;">
+                        <p style="font-size:0.75rem;"><b style="color:${color}">[${a.type.toUpperCase()}]</b> ${a.msg}</p>
+                    </div>`;
+            }).join('');
+        }
     }
 
-    // SERVICE WORKER (PWA)
+    // --- 7. INITIALIZATION & PWA ---
+    window.onload = () => {
+        runSync();
+        setInterval(runSync, 1500); // Check for admin updates every 1.5s
+    };
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
     }
 </script>
-
-</body>
-</html>
