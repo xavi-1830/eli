@@ -503,6 +503,63 @@
         window.scrollTo(0, 0);
     }
 
+        // LIVE SYNC FROM ADMIN
+    function liveSync(){
+      const fee = localStorage.getItem('eli_fees_elizabeth');
+      if(fee){
+        const bar = document.getElementById('fees-fill');
+        const msg = document.getElementById('fees-msg');
+        if(bar){
+          bar.style.width = fee + '%';
+          bar.style.background = fee=='100' ? '#008751' : '#FFD700';
+        }
+        if(msg){
+          msg.innerHTML = fee=='100' ? '✓ Verified: All Weeks Unlocked' : '<i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.';
+          msg.style.color = fee=='100' ? '#008751' : '#D2122E';
+        }
+      }
+      const anns = JSON.parse(localStorage.getItem('eli_announcements')||'[]');
+      const container = document.getElementById('ann-container');
+      if(anns.length > 0 && container){
+          container.innerHTML = anns.slice(0,3).map(a=>{
+            let color = a.type==='school' ? '#D2122E' : a.type==='course' ? '#008751' : '#B45309';
+            return `<div style="display:flex; gap:10px; margin-bottom:10px; border-left:3px solid ${color}; padding-left:8px;"><p style="font-size:0.75rem;"><b style="color:${color}">[${a.type.toUpperCase()}]</b> ${a.msg}</p></div>`
+          }).join('');
+      }
+    }
+    
+    // Start the sync engine
+    setInterval(liveSync, 1500);
+    liveSync();
+// LIVE SYNC FROM ADMIN
+function liveSync(){
+  const fee = localStorage.getItem('eli_fees_elizabeth');
+  if(fee){
+    const bar = document.getElementById('fees-fill');
+    const msg = document.getElementById('fees-msg');
+    if(bar){
+      bar.style.width = fee + '%';
+      bar.style.background = fee=='100' ? '#008751' : '#FFD700';
+    }
+    if(msg){
+      msg.innerHTML = fee=='100' ? '✓ Verified: All Weeks Unlocked' : '<i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.';
+      msg.style.color = fee=='100' ? '#008751' : '#D2122E';
+    }
+  }
+  const anns = JSON.parse(localStorage.getItem('eli_announcements')||'[]');
+  if(anns.length>0){
+    const container = document.getElementById('ann-container');
+    if(container){
+      container.innerHTML = anns.slice(0,3).map(a=>{
+        let color = a.type==='school' ? '#D2122E' : a.type==='course' ? '#008751' : '#B45309';
+        return `<div style="display:flex; gap:10px; margin-bottom:10px; border-left:3px solid ${color}; padding-left:8px;"><p style="font-size:0.75rem;"><b style="color:${color}">[${a.type.toUpperCase()}]</b> ${a.msg}</p></div>`
+      }).join('');
+    }
+  }
+}
+setInterval(liveSync, 1500);
+liveSync();
+    
     // COURSE FILTERING
     function filterCourses() {
         const query = document.getElementById('courseSearch').value.toLowerCase();
