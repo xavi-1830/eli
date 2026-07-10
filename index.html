@@ -2,107 +2,578 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ELI Student Portal | Imoleayo Elizabeth</title>
+    
+    <!-- PWA & Meta -->
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#008751">
+    <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=ELI&background=008751&color=fff&size=192">
+
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <style>
-        :root { --eli-green: #008751; --eli-yellow: #FFD700; --eli-red: #D2122E; --bg: #F4F7F6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding-bottom: 80px; }
-        .page { display: none; animation: fadeIn 0.4s ease; }
+        :root {
+            --eli-green: #008751;
+            --eli-yellow: #FFD700;
+            --eli-red: #D2122E;
+            --bg: #F4F7F6;
+            --white: #FFFFFF;
+            --text-main: #2D3436;
+            --text-muted: #636E72;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Basic Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); overflow-x: hidden; line-height: 1.5; padding-bottom: 90px; }
+
+        /* Navigation Bar */
+        header {
+            background: var(--eli-green);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .logo-text { font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; }
+        .notif-bell { position: relative; cursor: pointer; padding: 5px; }
+        .notif-badge {
+            position: absolute; top: 0; right: 0;
+            background: var(--eli-red); color: white;
+            font-size: 0.6rem; padding: 2px 5px;
+            border-radius: 50%; border: 2px solid var(--eli-green);
+            font-weight: 700;
+        }
+
+        /* Page Management */
+        .page { display: none; width: 100%; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        header { background: var(--eli-green); padding: 15px 20px; color: white; display: flex; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
-        .dash-profile { background: var(--eli-green); color: white; padding: 20px; border-radius: 0 0 30px 30px; display: flex; align-items: center; gap: 15px; }
-        .dash-profile img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--eli-yellow); background: white; }
-        .card { background: white; margin: 15px; padding: 18px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .section-title { font-size: 0.8rem; font-weight: 800; color: var(--eli-green); margin: 20px 20px 5px; text-transform: uppercase; }
-        .fees-bg { background: #eee; height: 10px; border-radius: 5px; margin: 10px 0; }
-        #fees-fill { background: var(--eli-yellow); height: 100%; width: 75%; transition: 1s; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; }
-        .nav-item { text-align: center; color: #999; text-decoration: none; font-size: 0.65rem; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Dashboard Components */
+        .profile-hero {
+            background: var(--eli-green);
+            color: white;
+            padding: 10px 20px 40px;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 20px;
+        }
+        .user-meta { display: flex; align-items: center; gap: 15px; }
+        .user-meta img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--eli-yellow); background: white; }
+        .user-meta h2 { font-size: 1rem; font-weight: 700; }
+        .user-meta p { font-size: 0.7rem; opacity: 0.9; }
+
+        /* Quick Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; margin-top: -25px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 18px; box-shadow: var(--shadow); text-align: center; }
+        .stat-card h3 { font-size: 1.4rem; color: var(--eli-green); font-weight: 800; }
+        .stat-card p { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+
+        .card { background: white; margin: 0 20px 15px; padding: 18px; border-radius: 20px; box-shadow: var(--shadow); }
+        .section-header { font-size: 0.8rem; font-weight: 800; color: var(--eli-green); margin: 10px 20px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Fees Bar (Psychological Lock) */
+        .fees-bar-bg { background: #E9ECEF; height: 12px; border-radius: 10px; margin: 12px 0; overflow: hidden; }
+        .fees-bar-fill { background: var(--eli-yellow); height: 100%; width: 75%; border-radius: 10px; position: relative; }
+        .fees-status-msg { font-size: 0.7rem; color: var(--eli-red); font-weight: 700; display: flex; align-items: center; gap: 5px; }
+
+        /* Widgets */
+        .widget-item { display: flex; gap: 12px; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #F1F2F6; }
+        .widget-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .widget-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+        .widget-text b { font-size: 0.75rem; display: block; }
+        .widget-text p { font-size: 0.65rem; color: var(--text-muted); }
+
+        /* Course Flow Styling */
+        .week-scroller { display: flex; overflow-x: auto; gap: 10px; padding: 5px 20px 20px; scrollbar-width: none; }
+        .week-scroller::-webkit-scrollbar { display: none; }
+        .week-btn { padding: 8px 22px; background: white; border-radius: 25px; border: 1px solid #eee; font-size: 0.75rem; font-weight: 600; white-space: nowrap; box-shadow: 2px 2px 10px rgba(0,0,0,0.02); }
+        .week-btn.active { background: var(--eli-green); color: white; border-color: var(--eli-green); }
+
+        .search-area { padding: 0 20px 15px; display: flex; gap: 10px; }
+        .search-input { flex: 1; padding: 12px 18px; border-radius: 15px; border: 1px solid #ddd; outline: none; font-size: 0.8rem; background: white; }
+        .filter-trigger { background: white; border: 1px solid #ddd; padding: 12px; border-radius: 15px; color: var(--eli-green); }
+
+        .course-card { background: white; margin: 0 20px 12px; padding: 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--eli-green); transition: 0.2s; }
+        .course-card:active { transform: scale(0.97); }
+        .course-card.locked { border-left-color: #ddd; opacity: 0.7; }
+
+        /* Lecture View */
+        .lecture-body { background: white; min-height: 100vh; padding: 20px; }
+        .sticky-assignment { background: #FFF5F5; border: 2px dashed var(--eli-red); padding: 15px; border-radius: 15px; margin: 20px 0; position: relative; }
+        .assignment-badge { position: absolute; top: -10px; right: 15px; background: var(--eli-red); color: white; font-size: 0.6rem; padding: 3px 10px; border-radius: 10px; font-weight: 800; }
+        
+        .video-player { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; flex-direction: column; margin-bottom: 20px; }
+        .pdf-section { background: #F8F9FA; padding: 15px; border-radius: 15px; display: flex; align-items: center; gap: 12px; margin-top: 15px; border: 1px solid #eee; }
+
+        /* Chatbot Overlay */
+        .alex-fab { position: fixed; bottom: 100px; right: 20px; display: none; align-items: center; gap: 10px; z-index: 100; }
+        .alex-chip { background: white; padding: 6px 15px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; color: var(--eli-green); border: 1px solid var(--eli-green); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .alex-btn { width: 60px; height: 60px; border-radius: 50%; background: var(--eli-green); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,135,81,0.3); }
+
+        .chat-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #F0F2F5; z-index: 2000; display: none; flex-direction: column; }
+        .chat-header { background: var(--eli-green); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-stream { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 0.8rem; line-height: 1.4; position: relative; }
+        .msg-name { font-size: 0.6rem; font-weight: 800; color: var(--eli-green); margin-bottom: 4px; display: block; text-transform: uppercase; }
+        .msg-bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg-user { background: var(--eli-green); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-other { background: #E2E8F0; align-self: flex-start; border-bottom-left-radius: 2px; }
+        
+        .typing-pill { font-size: 0.65rem; color: #999; font-style: italic; margin: 0 0 10px 20px; display: none; }
+        .chat-input-wrap { padding: 15px; background: white; display: flex; gap: 10px; align-items: center; border-top: 1px solid #eee; }
+        .chat-input-wrap input { flex: 1; padding: 12px 20px; border-radius: 25px; border: 1px solid #ddd; outline: none; font-size: 0.85rem; }
+
+        /* Results Tab */
+        .res-hero { background: var(--eli-green); color: white; border-radius: 20px; padding: 30px; margin: 0 20px 20px; text-align: center; }
+        .history-filters { display: flex; gap: 10px; margin: 0 20px 20px; }
+        .history-filters select { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 600; background: white; outline: none; }
+
+        /* Receipt Page */
+        .receipt-container { background: white; min-height: 100vh; padding: 40px 20px; }
+        .receipt-paper { border: 2px solid #333; padding: 25px; font-family: 'Courier New', monospace; position: relative; font-size: 0.8rem; }
+        .receipt-paper h2 { text-align: center; font-family: 'Poppins'; color: var(--eli-green); margin-bottom: 10px; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-item { text-align: center; color: #A0AEC0; text-decoration: none; font-size: 0.65rem; font-weight: 600; transition: 0.3s; }
         .nav-item.active { color: var(--eli-green); }
-        /* Bot & Chat UI retained from previous versions */
-        .alex-trigger { position: fixed; bottom: 90px; right: 20px; display: none; background: var(--eli-green); width: 55px; height: 55px; border-radius: 50%; justify-content: center; align-items: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 4px; }
+
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: 800;">ELISHA LENE INSTITUTE</div>
-    <div onclick="switchPage('notif-page', -1)" style="position:relative">
+    <div class="logo-text">ELISHA LENE INSTITUTE</div>
+    <div class="notif-bell" onclick="showPage('notif-screen')">
         <i class="fas fa-bell fa-lg"></i>
-        <span id="notif-count" style="position:absolute; top:-5px; right:-5px; background:var(--eli-red); color:white; font-size:0.6rem; padding:2px 5px; border-radius:50%;">3</span>
+        <span class="notif-badge" id="badge-count">3</span>
     </div>
 </header>
 
-<div id="dash-page" class="page active">
-    <div class="dash-profile">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth">
-        <div>
-            <h2>Oyeniran Imoleayo Elizabeth</h2>
-            <p>ELI/NUR/042 | 300 Level</p>
-            <p>Nursing | School of Health Sciences</p>
+<!-- DASHBOARD -->
+<div id="dash-screen" class="page active">
+    <div class="profile-hero">
+        <div class="user-meta">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth" alt="Elizabeth">
+            <div>
+                <h2>Oyeniran Imoleayo Elizabeth</h2>
+                <p>ELI/NUR/042 | 300 Level (Nursing)</p>
+            </div>
         </div>
     </div>
 
-    <div class="section-title">Latest Announcements</div>
-    <div class="card" id="ann-container">
-        <!-- Will be populated by Admin -->
-        <p style="font-size: 0.75rem; color: #777;">Loading announcements...</p>
+    <div class="stats-grid">
+        <div class="stat-card"><h3>4.52</h3><p>CGPA</p></div>
+        <div class="stat-card"><h3>4.20</h3><p>Current GPA</p></div>
     </div>
 
-    <div class="section-title">Finance & Access</div>
+    <div class="section-header"><span>School Fees Status</span></div>
     <div class="card">
-        <div class="fees-bg"><div id="fees-fill"></div></div>
-        <p id="fees-status" style="font-size:0.7rem; color:var(--eli-red); font-weight:700;">Partial Payment: Week 9+ Restricted</p>
+        <div class="fees-bar-bg"><div class="fees-bar-fill"></div></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 800;">
+            <span>Verified: ₦150,000</span>
+            <span style="color: var(--eli-green);">75% Paid</span>
+        </div>
+        <p class="fees-status-msg" id="fees-msg">
+            <i class="fas fa-lock"></i> Financial Warning: Week 9+ Modules are currently locked.
+        </p>
+    </div>
+
+    <div class="section-header"><span>Recent Activity</span></div>
+    <div class="card">
+        <div class="widget-item">
+            <div class="widget-icon" style="background: #EBFBEE; color: var(--eli-green);"><i class="fas fa-history"></i></div>
+            <div class="widget-text">
+                <b>NSC 301: Medical-Surgical</b>
+                <p>Last viewed: Week 5 Module (60% Read)</p>
+            </div>
+        </div>
+        <div class="widget-item">
+            <div class="widget-icon" style="background: #FFF5F5; color: var(--eli-red);"><i class="fas fa-clock"></i></div>
+            <div class="widget-text">
+                <b>Pharmacology Assignment</b>
+                <p>Due in: 24 Hours</p>
+            </div>
+        </div>
+        <button class="week-btn active" style="width: 100%; margin-top: 10px;" onclick="showPage('course-screen')">Continue Learning</button>
+    </div>
+
+    <div class="section-header"><span>Announcements</span></div>
+    <div class="card">
+        <div class="widget-item">
+            <div class="widget-icon" style="background: #FFFBEB; color: #B45309;"><i class="fas fa-bullhorn"></i></div>
+            <div class="widget-text">
+                <b>[SCHOOL] Mid-Semester Break</b>
+                <p>Senate has approved July 15th for break commencement.</p>
+            </div>
+        </div>
+        <div class="widget-item">
+            <div class="widget-icon" style="background: #EBFBEE; color: var(--eli-green);"><i class="fas fa-book"></i></div>
+            <div class="widget-text">
+                <b>[COURSES] Maternal Health</b>
+                <p>Week 5 Lecture materials have been uploaded.</p>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- (Rest of the pages: Courses, Results, Profile, Notifications, Chatbot, Receipt Modal - All Kept) -->
+<!-- COURSE LIST -->
+<div id="course-screen" class="page">
+    <div class="section-header"><span>Select Academic Week</span></div>
+    <div class="week-scroller">
+        <div class="week-btn">Week 1</div>
+        <div class="week-btn">Week 2</div>
+        <div class="week-btn">Week 3</div>
+        <div class="week-btn">Week 4</div>
+        <div class="week-btn active">Week 5</div>
+        <div class="week-btn">Week 6</div>
+    </div>
 
+    <div class="search-area">
+        <div style="position: relative; flex: 1;">
+            <i class="fas fa-search" style="position: absolute; left: 15px; top: 15px; color: #A0AEC0;"></i>
+            <input type="text" class="search-input" id="courseSearch" placeholder="Search course or topic..." onkeyup="filterCourses()">
+        </div>
+        <button class="filter-trigger"><i class="fas fa-sliders-h"></i></button>
+    </div>
+
+    <div id="course-container">
+        <!-- 8 Formulated Nursing Courses -->
+        <div class="course-card" onclick="openLecture('NSC 301: Medical-Surgical Nursing I', 'Cardiac Care Logic')">
+            <div><h4>NSC 301</h4><p>Topic: Cardiac Care Logic</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 302: Maternal Health', 'Prenatal Screening')">
+            <div><h4>NSC 302</h4><p>Topic: Prenatal Screening</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 303: Mental Health', 'Anxiety Disorders')">
+            <div><h4>NSC 303</h4><p>Topic: Anxiety Disorders</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 304: Pharmacology', 'Antihypertensives')">
+            <div><h4>NSC 304</h4><p>Topic: Antihypertensives</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 305: Community Health', 'Rural Sanitation')">
+            <div><h4>NSC 305</h4><p>Topic: Rural Sanitation</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 306: Nursing Research', 'Hypothesis Testing')">
+            <div><h4>NSC 306</h4><p>Topic: Hypothesis Testing</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('NSC 307: Nutritional Biochem', 'Metabolic Cycles')">
+            <div><h4>NSC 307</h4><p>Topic: Metabolic Cycles</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+        <div class="course-card" onclick="openLecture('GST 311: Entrepreneurship', 'Business Planning')">
+            <div><h4>GST 311</h4><p>Topic: Business Planning</p></div>
+            <span style="font-size: 0.6rem; background: #EBFBEE; padding: 4px 8px; border-radius: 5px; color: var(--eli-green); font-weight: 800;">WEEK 5</span>
+        </div>
+    </div>
+</div>
+
+<!-- LECTURE VIEW -->
+<div id="lecture-screen" class="page" style="background: white;">
+    <div onclick="showPage('course-screen')" style="padding: 15px; color: var(--eli-green); font-weight: 700;"><i class="fas fa-arrow-left"></i> Back to Courses</div>
+    
+    <div class="lecture-body">
+        <h1 id="active-course-name" style="color: var(--eli-green); font-size: 1.2rem;"></h1>
+        <p id="active-topic-name" style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 15px;"></p>
+
+        <div class="video-player">
+            <i class="fab fa-youtube fa-3x" style="color: var(--eli-red);"></i>
+            <span style="font-size: 0.8rem; margin-top: 10px; font-weight: 700;">Play Module Video</span>
+        </div>
+
+        <div style="font-size: 0.85rem; line-height: 1.8; color: #444;">
+            <p>In this module, we discuss the practical assessment of the patient. Students are required to follow the steps outlined in the clinical demonstration video above...</p>
+        </div>
+
+        <!-- Sticky Mandatory Assignment -->
+        <div class="sticky-assignment">
+            <span class="assignment-badge">URGENT</span>
+            <b style="color: var(--eli-red); font-size: 0.75rem;">MODULE ASSIGNMENT</b>
+            <p style="font-size: 0.7rem; margin-top: 5px;">Submit a 500-word case study on Cardiac Assessment. Failure to submit results in module lock.</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                <span style="font-size: 0.65rem; font-weight: 800;">Deadline: June 28</span>
+                <button class="week-btn active" style="padding: 5px 15px; background: var(--eli-red); border: none;">SUBMIT</button>
+            </div>
+        </div>
+
+        <h3 style="font-size: 0.9rem; margin: 20px 0 10px;">Summary</h3>
+        <p style="font-size: 0.8rem; color: #666;">Key takeaways include cardiac rhythm identification and immediate intervention protocols.</p>
+
+        <div class="pdf-section">
+            <i class="fas fa-file-pdf fa-2x" style="color: var(--eli-red);"></i>
+            <div style="flex: 1;">
+                <b style="font-size: 0.75rem;">Lecture_Notes_Full.pdf</b>
+                <p style="font-size: 0.65rem;">Size: 18.5 MB (Large File)</p>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <button class="week-btn" style="padding: 5px 10px;">Preview</button>
+                <button class="week-btn active" style="padding: 5px 10px;">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- RESULTS -->
+<div id="result-screen" class="page">
+    <div class="res-hero">
+        <p style="font-size: 0.75rem; opacity: 0.8;">Cumulative GPA (CGPA)</p>
+        <h1 style="font-size: 3.5rem; font-weight: 800;">4.52</h1>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+            <span style="background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius: 10px; font-size: 0.75rem;">GPA: 4.20</span>
+        </div>
+    </div>
+
+    <div class="section-header"><span>Academic History</span></div>
+    <div class="history-filters">
+        <select onchange="updateHistory()">
+            <option>Third Year</option>
+            <option>Second Year</option>
+            <option>First Year</option>
+        </select>
+        <select onchange="updateHistory()">
+            <option>First Semester</option>
+            <option selected>Second Semester</option>
+        </select>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+            <span style="font-size: 0.8rem;">NSC 301 Medical-Surgical Nursing</span>
+            <b style="color: var(--eli-green);">A</b>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+            <span style="font-size: 0.8rem;">NSC 304 Pharmacology</span>
+            <b style="color: var(--eli-green);">A</b>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 12px 0;">
+            <span style="font-size: 0.8rem;">NSC 307 Nutritional Biochem</span>
+            <b style="color: #F59E0B;">B</b>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE & RECEIPTS -->
+<div id="profile-screen" class="page">
+    <div class="profile-hero" style="text-align: center; padding-top: 30px;">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth" style="width: 100px; height: 100px; border: 4px solid var(--eli-yellow);">
+        <h2 style="margin-top: 15px;">Oyeniran Elizabeth</h2>
+        <p>ELI/NUR/042 | 300 Level</p>
+    </div>
+
+    <div class="card">
+        <div class="widget-item" onclick="showReceipt()">
+            <div class="widget-icon" style="background: #EBFBEE; color: var(--eli-green);"><i class="fas fa-receipt"></i></div>
+            <div class="widget-text">
+                <b>Tuition Payment (#ELI2025001)</b>
+                <p>Status: Verified (₦150,000)</p>
+            </div>
+            <i class="fas fa-chevron-right" style="margin-left: auto; color: #ccc;"></i>
+        </div>
+    </div>
+
+    <div class="section-header"><span>Account Settings</span></div>
+    <div class="card">
+        <div class="widget-item"><b>Update Profile Photo</b></div>
+        <div class="widget-item"><b>Change Password</b></div>
+        <div class="widget-item" style="color: var(--eli-red);"><b>Logout</b></div>
+    </div>
+</div>
+
+<!-- NOTIFICATION SCREEN -->
+<div id="notif-screen" class="page">
+    <div onclick="showPage('dash-screen')" style="padding: 15px; color: var(--eli-green); font-weight: 700;"><i class="fas fa-arrow-left"></i> Back</div>
+    <div class="section-header"><span>Notifications</span></div>
+    
+    <div class="card" style="border-left: 5px solid var(--eli-red);">
+        <b style="color: var(--eli-red); font-size: 0.8rem;">PAYMENT REQUIRED</b>
+        <p style="font-size: 0.7rem; margin-top: 5px;">Your Second Semester payment is pending. Week 9 modules will be locked in 48 hours.</p>
+    </div>
+    <div class="card" style="border-left: 5px solid var(--eli-green);">
+        <b style="color: var(--eli-green); font-size: 0.8rem;">NEW MODULE</b>
+        <p style="font-size: 0.7rem; margin-top: 5px;">NSC 301: Cardiac Care Week 5 material is now live.</p>
+    </div>
+    <div class="card" style="border-left: 5px solid #F59E0B;">
+        <b style="color: #F59E0B; font-size: 0.8rem;">SYSTEM</b>
+        <p style="font-size: 0.7rem; margin-top: 5px;">Password changed successfully.</p>
+    </div>
+</div>
+
+<!-- RECEIPT DETAIL PAGE -->
+<div id="receipt-screen" class="page">
+    <div onclick="showPage('profile-screen')" style="padding: 15px; color: var(--eli-green); font-weight: 700;"><i class="fas fa-arrow-left"></i> Back</div>
+    <div class="receipt-container">
+        <div class="receipt-paper">
+            <h2>ELISHA LENE INSTITUTE</h2>
+            <p style="text-align: center; font-size: 0.6rem; border-bottom: 1px dashed #333; padding-bottom: 10px; margin-bottom: 15px;">OFFICIAL TUITION RECEIPT</p>
+            <p>NAME: Oyeniran Elizabeth</p>
+            <p>MATRIC: ELI/NUR/042</p>
+            <p>LEVEL: 300 LEVEL (NURSING)</p>
+            <p>DATE: 25-OCT-2024</p>
+            <p>-------------------------</p>
+            <p>PAYMENT ID: ELI2025001</p>
+            <p>AMOUNT: NGN 150,000.00</p>
+            <p>BALANCE: NGN 50,000.00</p>
+            <p>-------------------------</p>
+            <p style="text-align: center; font-weight: bold; margin-top: 20px; border: 1px solid #000; padding: 5px;">VERIFIED & STAMPED</p>
+            
+            <button class="week-btn active" style="width: 100%; margin-top: 30px;" onclick="window.print()">PRINT RECEIPT</button>
+        </div>
+    </div>
+</div>
+
+<!-- PROF ALEX FAB & CHAT -->
+<div id="alex-fab" class="alex-fab" onclick="toggleChat(true)">
+    <div class="alex-chip">Ask Prof. Alex</div>
+    <div class="alex-btn"><i class="fas fa-robot fa-lg"></i></div>
+</div>
+
+<div id="chat-overlay" class="chat-overlay">
+    <div class="chat-header">
+        <span><i class="fas fa-robot"></i> Prof. Alex (Public Session)</span>
+        <i class="fas fa-times fa-lg" onclick="toggleChat(false)" style="cursor: pointer;"></i>
+    </div>
+    <div class="chat-stream" id="chat-stream">
+        <div class="msg msg-bot">
+            <span class="msg-name">PROF. ALEX</span>
+            Hello <b>Elizabeth</b>! I'm here to help with NSC 301 Cardiac Care questions. 
+            <br><small style="color: #999;">*All Nursing 300L students can see this feed.</small>
+        </div>
+        <div class="msg msg-other">
+            <span class="msg-name">CHIDINMA</span>
+            Prof, will the practical exam cover cardiac rhythm?
+        </div>
+    </div>
+    <div class="typing-pill" id="typing">Prof. Alex is thinking...</div>
+    <div class="chat-input-wrap">
+        <input type="text" id="chat-input" placeholder="Type your question...">
+        <button class="alex-btn" style="width: 45px; height: 45px;" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
-    <a href="#" class="nav-item active" onclick="switchPage('dash-page', 0)"><i class="fas fa-home"></i><br>Dash</a>
-    <a href="#" class="nav-item" onclick="switchPage('dash-page', 1)"><i class="fas fa-book"></i><br>Courses</a>
-    <a href="#" class="nav-item" onclick="switchPage('dash-page', 2)"><i class="fas fa-poll"></i><br>Results</a>
-    <a href="#" class="nav-item" onclick="switchPage('dash-page', 3)"><i class="fas fa-user-circle"></i><br>Profile</a>
+    <a href="javascript:void(0)" class="nav-item active" onclick="showPage('dash-screen', this)">
+        <i class="fas fa-home"></i>Dashboard
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="showPage('course-screen', this)">
+        <i class="fas fa-book-open"></i>Courses
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="showPage('result-screen', this)">
+        <i class="fas fa-chart-line"></i>Results
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="showPage('profile-screen', this)">
+        <i class="fas fa-user-circle"></i>Profile
+    </a>
 </nav>
 
 <script>
-    function switchPage(p, idx) {
-        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-        // (Simplified for demo, you have the full switch logic in your current file)
-    }
-
-    // SYNC ENGINE: Listen to Admin changes
-    function syncWithAdmin() {
-        // 1. Update Fees
-        const feeStatus = localStorage.getItem('elizabeth_fees');
-        if(feeStatus === 'paid') {
-            document.getElementById('fees-fill').style.width = '100%';
-            document.getElementById('fees-fill').style.background = 'var(--eli-green)';
-            document.getElementById('fees-status').innerHTML = "✓ Full Payment Verified: All Weeks Unlocked";
-            document.getElementById('fees-status').style.color = "var(--eli-green)";
+    // PAGE NAVIGATION LOGIC
+    function showPage(pageId, navElement) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        // Show target page
+        document.getElementById(pageId).classList.add('active');
+        
+        // Update Bottom Nav UI
+        if (navElement) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            navElement.classList.add('active');
         }
 
-        // 2. Update Announcements
-        const newAnn = localStorage.getItem('latest_announcement');
-        if(newAnn) {
-            document.getElementById('ann-container').innerHTML = `
-                <div style="display:flex; gap:10px; font-size:0.75rem;">
-                    <i class="fas fa-bullhorn" style="color:var(--eli-red)"></i>
-                    <p><b>NEW:</b> ${newAnn}</p>
-                </div>
-            `;
+        // Show/Hide Prof Alex Contextually (Only on Lecture Screen)
+        const botTrigger = document.getElementById('alex-fab');
+        botTrigger.style.display = (pageId === 'lecture-screen') ? 'flex' : 'none';
+
+        window.scrollTo(0, 0);
+    }
+
+    // COURSE FILTERING
+    function filterCourses() {
+        const query = document.getElementById('courseSearch').value.toLowerCase();
+        const cards = document.querySelectorAll('.course-card');
+        cards.forEach(card => {
+            const title = card.innerText.toLowerCase();
+            card.style.display = title.includes(query) ? 'flex' : 'none';
+        });
+    }
+
+    // LECTURE OPENER
+    function openLecture(course, topic) {
+        document.getElementById('active-course-name').innerText = course;
+        document.getElementById('active-topic-name').innerText = "Topic: " + topic;
+        showPage('lecture-screen');
+    }
+
+    // CHATBOT LOGIC (Optimized)
+    function toggleChat(show) {
+        document.getElementById('chat-overlay').style.display = show ? 'flex' : 'none';
+    }
+
+    function sendChat() {
+        const input = document.getElementById('chat-input');
+        const stream = document.getElementById('chat-stream');
+        const typing = document.getElementById('typing');
+
+        if (input.value.trim() !== "") {
+            // Instant Message (UX Optimization)
+            const uMsg = document.createElement('div');
+            uMsg.className = "msg msg-user";
+            uMsg.innerHTML = `<span class="msg-name" style="color: white">YOU</span>${input.value}`;
+            stream.appendChild(uMsg);
+            
+            const text = input.value;
+            input.value = "";
+            stream.scrollTop = stream.scrollHeight;
+
+            // Simulated Prof Alex Typing
+            setTimeout(() => {
+                typing.style.display = "block";
+                stream.scrollTop = stream.scrollHeight;
+            }, 600);
+
+            setTimeout(() => {
+                typing.style.display = "none";
+                const bMsg = document.createElement('div');
+                bMsg.className = "msg msg-bot";
+                bMsg.innerHTML = `<span class="msg-name">PROF. ALEX</span>Good question, Elizabeth. For "${text}", refer to Section 4 of the cardiac manual.`;
+                stream.appendChild(bMsg);
+                stream.scrollTop = stream.scrollHeight;
+            }, 2000);
         }
     }
 
-    window.onload = () => {
-        syncWithAdmin();
-        setInterval(syncWithAdmin, 2000); // Check for updates every 2 seconds
-    };
+    // RECEIPT LOGIC
+    function showReceipt() { showPage('receipt-screen'); }
+
+    // RESULTS MOCK REFRESH
+    function updateHistory() {
+        // Just a UI flicker to simulate loading
+        const container = document.querySelector('#result-screen .card');
+        container.style.opacity = '0.5';
+        setTimeout(() => { container.style.opacity = '1'; }, 300);
+    }
+
+    // SERVICE WORKER (PWA)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
 </script>
+
 </body>
 </html>
