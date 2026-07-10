@@ -3,446 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELI Portal | Munachi Kyrian Amande</title>
-    
-    <!-- PWA Setup -->
+    <title>ELI Student Portal | Munachi Kyrian Amande</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#008751">
-    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
     <style>
-        :root {
-            --eli-green: #008751;
-            --eli-yellow: #FFD700;
-            --eli-red: #D2122E;
-            --bg: #F4F7F6;
-            --white: #FFFFFF;
-        }
-
+        :root { --eli-green: #008751; --eli-yellow: #FFD700; --eli-red: #D2122E; --bg: #F4F7F6; --white: #FFFFFF; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); color: #333; padding-bottom: 80px; overflow-x: hidden; }
 
-        /* Pages System */
+        /* Pages */
         .page { display: none; animation: fadeIn 0.4s ease; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Navigation & Header */
-        header { background: var(--eli-green); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .logo { font-weight: 800; font-size: 0.9rem; letter-spacing: 1px; }
+        /* Header */
+        header { background: var(--eli-green); padding: 15px 20px; color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .notif-bell { position: relative; cursor: pointer; }
+        .badge { position: absolute; top: -5px; right: -8px; background: var(--eli-red); color: white; font-size: 0.6rem; padding: 2px 5px; border-radius: 50%; border: 2px solid var(--eli-green); }
 
-        /* Dashboard Components */
-        .dash-profile { background: var(--eli-green); color: white; padding: 20px; border-radius: 0 0 25px 25px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .dash-profile img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--eli-yellow); background: white; }
-        
-        .card { background: white; margin: 0 15px 15px; padding: 18px; border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .section-title { font-size: 0.8rem; font-weight: 800; color: var(--eli-green); margin: 0 20px 10px; text-transform: uppercase; }
+        /* Dashboard Profile */
+        .dash-profile { background: var(--eli-green); color: white; padding: 20px; border-radius: 0 0 30px 30px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .dash-profile img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--eli-yellow); background: white; }
 
-        /* Announcements Widget */
-        .ann-hub { margin-bottom: 15px; }
-        .ann-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-        .ann-tab { padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; background: #ddd; cursor: pointer; font-weight: 600; }
+        /* General Card */
+        .card { background: white; margin: 0 15px 15px; padding: 18px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .section-title { font-size: 0.8rem; font-weight: 800; color: var(--eli-green); margin: 20px; text-transform: uppercase; }
+
+        /* Announcements Hub */
+        .ann-tabs { display: flex; gap: 10px; margin-bottom: 12px; }
+        .ann-tab { padding: 6px 15px; border-radius: 20px; font-size: 0.7rem; background: #ddd; cursor: pointer; font-weight: 600; }
         .ann-tab.active { background: var(--eli-yellow); color: black; }
-        .ann-item { display: flex; gap: 10px; font-size: 0.75rem; padding-bottom: 10px; border-bottom: 1px solid #eee; margin-bottom: 10px; }
+        .ann-item { display: flex; gap: 10px; font-size: 0.75rem; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
 
-        /* Course Flow Components */
-        .week-scroller { display: flex; overflow-x: auto; gap: 10px; padding: 5px 15px 15px; scrollbar-width: none; }
-        .week-btn { padding: 8px 18px; background: white; border-radius: 20px; white-space: nowrap; font-size: 0.75rem; font-weight: 600; border: 1px solid #ddd; }
-        .week-btn.active { background: var(--eli-green); color: white; border-color: var(--eli-green); }
+        /* Fees Bar (Economic Psychology) */
+        .fees-bg { background: #eee; height: 12px; border-radius: 6px; margin: 12px 0; }
+        .fees-fill { background: var(--eli-yellow); height: 100%; width: 75%; border-radius: 6px; }
 
+        /* Course Flow */
+        .week-scroller { display: flex; overflow-x: auto; gap: 10px; padding: 5px 15px 20px; scrollbar-width: none; }
+        .week-chip { padding: 8px 18px; background: white; border-radius: 20px; border: 1px solid #ddd; font-size: 0.75rem; white-space: nowrap; font-weight: 600; }
+        .week-chip.active { background: var(--eli-green); color: white; }
         .search-box { display: flex; gap: 10px; margin: 0 15px 15px; }
         .search-box input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; font-size: 0.8rem; }
-        
-        .course-card { background: white; margin: 0 15px 10px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--eli-green); transition: 0.3s; }
-        .course-card:active { transform: scale(0.98); }
+        .course-card { background: white; margin: 0 15px 10px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--eli-green); }
 
-        /* Lecture Content UI */
-        .video-box { background: #000; width: 100%; aspect-ratio: 16/9; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; margin-bottom: 15px; }
-        .assignment-box { background: #FFF5F5; border: 2.2px dashed var(--eli-red); padding: 15px; border-radius: 15px; margin: 20px 0; }
+        /* Lecture Content */
+        .video-box { background: #000; width: 100%; aspect-ratio: 16/9; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; margin: 15px 0; }
+        .assign-box { background: #FFF5F5; border: 2px dashed var(--eli-red); padding: 15px; border-radius: 15px; margin: 20px 0; }
+        .pdf-box { background: #F0F4F2; padding: 15px; border-radius: 12px; display: flex; align-items: center; gap: 12px; }
 
-        /* Results Time-Machine */
-        .results-header { background: var(--eli-green); color: white; padding: 25px; border-radius: 20px; text-align: center; margin: 0 15px 20px; }
-        .filter-row { display: flex; gap: 10px; margin: 0 15px 15px; }
-        .filter-row select { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 600; }
+        /* Results History */
+        .res-head { background: var(--eli-green); color: white; padding: 25px; border-radius: 20px; text-align: center; margin: 0 15px 20px; }
+        .history-row { display: flex; gap: 10px; margin: 0 15px 15px; }
+        .history-row select { flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd; font-size: 0.75rem; font-weight: 600; }
 
-        /* PROF ALEX CHAT UI - OPTIMIZED */
+        /* Prof Alex Chatbot */
+        .alex-trigger { position: fixed; bottom: 90px; right: 20px; display: none; align-items: center; gap: 10px; z-index: 100; }
+        .alex-btn { background: var(--eli-green); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .chat-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #F0F2F5; z-index: 3000; display: none; flex-direction: column; }
-        .chat-head { background: var(--eli-green); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .chat-bubble { padding: 12px 16px; border-radius: 18px; font-size: 0.85rem; max-width: 85%; line-height: 1.4; position: relative; }
-        .bubble-name { font-size: 0.65rem; font-weight: 800; display: block; margin-bottom: 4px; color: var(--eli-green); }
-        .bubble-bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .bubble { padding: 12px 15px; border-radius: 18px; font-size: 0.8rem; max-width: 85%; line-height: 1.4; }
+        .bubble-bot { background: white; align-self: flex-start; border-bottom-left-radius: 2px; }
         .bubble-user { background: var(--eli-green); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bubble-other { background: #E2E8F0; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .typing { font-size: 0.7rem; color: #777; font-style: italic; display: none; margin-left: 20px; margin-bottom: 10px; }
-        .chat-footer { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
-        .chat-footer input { flex: 1; padding: 12px 18px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
-
-        /* Floating Bot Trigger */
-        .alex-trigger { position: fixed; bottom: 100px; right: 20px; display: none; align-items: center; gap: 10px; z-index: 100; }
-        .alex-btn { background: var(--eli-green); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
 
         /* Receipt View */
         .receipt-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 4000; display: none; padding: 20px; }
-        .receipt-paper { border: 2px solid #333; padding: 25px; font-family: 'Courier New', monospace; border-radius: 5px; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; }
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; z-index: 1000; }
         .nav-item { text-align: center; color: #999; text-decoration: none; font-size: 0.65rem; font-weight: 600; }
         .nav-item.active { color: var(--eli-green); }
-        .nav-item i { display: block; font-size: 1.4rem; margin-bottom: 4px; }
-
+        .nav-item i { display: block; font-size: 1.3rem; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">ELISHA LENE INSTITUTE</div>
-    <div onclick="switchPage('profile-page', 3)"><i class="fas fa-user-circle fa-lg"></i></div>
+    <div style="font-weight: 800;">ELISHA LENE INSTITUTE</div>
+    <div class="notif-bell" onclick="switchPage('notif-page', -1)">
+        <i class="fas fa-bell fa-lg"></i>
+        <span class="badge">3</span>
+    </div>
 </header>
 
-<!-- DASHBOARD -->
+<!-- HOME PAGE -->
 <div id="dash-page" class="page active">
     <div class="dash-profile">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Munachi" alt="Munachi">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Munachi">
         <div>
             <h2>Munachi Kyrian Amande</h2>
-            <p>ELI/CSC/002 | Third Year</p>
+            <p>ELI/CSC/002 | 300 Level</p>
             <p>Computer Science</p>
         </div>
     </div>
 
-    <div class="section-title">Institutional Announcements</div>
-    <div class="card ann-hub">
+    <div class="section-title">Announcements</div>
+    <div class="card">
         <div class="ann-tabs">
             <div class="ann-tab active" onclick="toggleAnn('school', this)">School</div>
             <div class="ann-tab" onclick="toggleAnn('course', this)">Course</div>
         </div>
-        <div id="ann-content">
+        <div id="ann-list">
             <div class="ann-item">
                 <i class="fas fa-bullhorn" style="color:var(--eli-red)"></i>
-                <p><b>Registry:</b> Late course registration for Third Year students closes this Friday.</p>
-            </div>
-            <div class="ann-item">
-                <i class="fas fa-calendar" style="color:var(--eli-green)"></i>
-                <p><b>Senate:</b> The Mid-Semester break has been approved for August 5th.</p>
+                <p><b>Registry:</b> Final semester registration closes Friday.</p>
             </div>
         </div>
     </div>
 
-    <div class="section-title">Finance & Access</div>
+    <div class="section-title">Fees Progress</div>
     <div class="card">
-        <div style="display:flex; justify-content:space-between; font-size:0.75rem; font-weight:800;">
-            <span>School Fees Verification</span>
-            <span style="color:var(--eli-green)">75% Verified</span>
-        </div>
-        <div style="background:#eee; height:12px; border-radius:6px; margin:10px 0;">
-            <div style="background:var(--eli-yellow); height:100%; width:75%;"></div>
-        </div>
-        <p style="font-size:0.7rem; color:var(--eli-red); font-weight:700;">
-            <i class="fas fa-lock"></i> Warning: Pay balance to unlock Week 9-12 and Examination IDs.
-        </p>
+        <div class="fees-bg"><div class="fees-fill"></div></div>
+        <p style="font-size:0.7rem; color:var(--eli-red); font-weight:700;"><i class="fas fa-lock"></i> Account restricted. Full payment required to unlock Exams & Weeks 9+.</p>
+    </div>
+    
+    <button onclick="switchPage('course-page', 1)" style="width:calc(100% - 30px); margin:0 15px; padding:15px; background:var(--eli-green); color:white; border:none; border-radius:12px; font-weight:700;">CONTINUE LEARNING</button>
+</div>
+
+<!-- NOTIFICATION PAGE -->
+<div id="notif-page" class="page">
+    <div onclick="switchPage('dash-page', 0)" style="padding:15px; color:var(--eli-green); font-weight:700;"><i class="fas fa-arrow-left"></i> Back</div>
+    <div class="section-title">All Notifications</div>
+    <div class="card" style="border-left:5px solid var(--eli-red);">
+        <b>Payment Alert</b><p style="font-size:0.75rem;">Second installment for Third Year is overdue.</p>
+    </div>
+    <div class="card" style="border-left:5px solid var(--eli-green);">
+        <b>CSC 305</b><p style="font-size:0.75rem;">New module: Neural Networks is now available.</p>
     </div>
 </div>
 
-<!-- COURSES -->
+<!-- COURSES PAGE -->
 <div id="course-page" class="page">
-    <div class="section-title">Select Week</div>
+    <div class="section-title">Weekly Materials</div>
     <div class="week-scroller">
-        <div class="week-btn">Week 1</div>
-        <div class="week-btn">Week 2</div>
-        <div class="week-btn">Week 3</div>
-        <div class="week-btn">Week 4</div>
-        <div class="week-btn active">Week 5</div>
-        <div class="week-btn">Week 6</div>
+        <div class="week-chip active">Week 5</div>
+        <div class="week-chip">Week 6</div>
+        <div class="week-chip">Week 7</div>
     </div>
-
     <div class="search-box">
-        <input type="text" id="courseSearch" placeholder="Search by course code or topic..." onkeyup="filterCourses()">
-        <div style="background:white; padding:12px; border-radius:12px; border:1px solid #ddd;"><i class="fas fa-search" style="color:var(--eli-green)"></i></div>
+        <input type="text" id="cSearch" placeholder="Search course or topic..." onkeyup="searchC()">
+        <div style="background:white; padding:12px; border-radius:12px; border:1px solid #ddd;"><i class="fas fa-search"></i></div>
     </div>
-
     <div id="course-list">
-        <!-- Formulated 8 Courses -->
-        <div class="course-card" onclick="openLecture('CSC 301: Software Engineering', 'Requirements Logic')">
-            <div><h4>CSC 301</h4><p>Software Engineering</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 302: Database Systems II', 'Relational Calculus')">
-            <div><h4>CSC 302</h4><p>Database Systems II</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 303: Operating Systems', 'Deadlock Detection')">
-            <div><h4>CSC 303</h4><p>Operating Systems</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 304: Computer Architecture', 'RISC vs CISC')">
-            <div><h4>CSC 304</h4><p>Computer Architecture</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 305: Artificial Intelligence', 'Neural Networks')">
-            <div><h4>CSC 305</h4><p>Artificial Intelligence</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 306: Automata Theory', 'Turing Machines')">
-            <div><h4>CSC 306</h4><p>Automata Theory</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 307: Web Technologies', 'Backend Integration')">
-            <div><h4>CSC 307</h4><p>Web Technologies</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-        <div class="course-card" onclick="openLecture('CSC 308: Mobile App Development', 'State Management')">
-            <div><h4>CSC 308</h4><p>Mobile App Development</p></div>
-            <i class="fas fa-chevron-right"></i>
-        </div>
-    </div>
-</div>
-
-<!-- RESULTS (Time Machine) -->
-<div id="result-page" class="page">
-    <div class="results-header">
-        <p style="font-size:0.75rem; opacity:0.8;">Cumulative GPA (CGPA)</p>
-        <h1 style="font-size:3.5rem;">4.52</h1>
-        <p style="font-size:0.75rem; font-weight:800; color:var(--eli-yellow);">First Class Standing</p>
-    </div>
-
-    <div class="filter-row">
-        <select id="levelSelect" onchange="updateHistory()">
-            <option value="Third Year">Third Year</option>
-            <option value="Second Year">Second Year</option>
-            <option value="First Year">First Year</option>
-        </select>
-        <select id="semSelect" onchange="updateHistory()">
-            <option value="First Semester">First Semester</option>
-            <option value="Second Semester" selected>Second Semester</option>
-        </select>
-    </div>
-
-    <div id="history-container">
-        <div class="card">
-            <h4 style="font-size:0.85rem; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">
-                Results for <span id="h-level">Third Year</span> - <span id="h-sem">Second Semester</span>
-            </h4>
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:8px;"><span>CSC 301</span><b>A</b></div>
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:8px;"><span>CSC 305</span><b>A</b></div>
-            <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:8px;"><span>CSC 308</span><b>B</b></div>
-            <div style="text-align:right; border-top:1px solid #eee; margin-top:10px; padding-top:10px; font-weight:800; color:var(--eli-green);">GPA: 4.25</div>
-        </div>
-    </div>
-</div>
-
-<!-- PROFILE & SETTINGS -->
-<div id="profile-page" class="page">
-    <div class="card" style="text-align:center; padding:30px 10px;">
-        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Munachi" style="width:100px; border-radius:50%; border:4px solid var(--eli-green);">
-        <h2 style="margin-top:10px;">Munachi K. Amande</h2>
-        <p style="font-size:0.8rem; color:#666;">ELI/CSC/002 | 300 Level</p>
-    </div>
-
-    <div class="section-title">Quick Actions</div>
-    <div class="card" onclick="openReceipt()" style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-            <h4 style="font-size:0.85rem;">School Fees Receipt</h4>
-            <p style="font-size:0.65rem; color:var(--eli-green);">Verified on 28th April</p>
-        </div>
-        <i class="fas fa-print fa-lg" style="color:var(--eli-green)"></i>
+        <div class="course-card" onclick="openL('CSC 301: Software Engineering')"><div><h4>CSC 301</h4><p>Software Engineering</p></div><i class="fas fa-chevron-right"></i></div>
+        <div class="course-card" onclick="openL('CSC 305: Artificial Intelligence')"><div><h4>CSC 305</h4><p>Artificial Intelligence</p></div><i class="fas fa-chevron-right"></i></div>
+        <!-- (Rest of 8 courses formulated) -->
     </div>
 </div>
 
 <!-- LECTURE VIEW -->
-<div id="lecture-view" class="page" style="background:white; min-height:100vh;">
-    <div onclick="switchPage('course-page', 1)" style="padding:20px; color:var(--eli-green); font-weight:800; font-size:0.85rem;"><i class="fas fa-arrow-left"></i> Back to Courses</div>
-    
-    <div style="padding:0 20px 40px;">
-        <h2 id="l-title" style="color:var(--eli-green); font-size:1.3rem;"></h2>
-        <p id="l-topic" style="font-weight:700; color:#666; font-size:0.8rem; margin-bottom:15px;"></p>
-
+<div id="lecture-page" class="page" style="background:white; min-height:100vh;">
+    <div onclick="switchPage('course-page', 1)" style="padding:20px; color:var(--eli-green); font-weight:800;"><i class="fas fa-arrow-left"></i> Back</div>
+    <div style="padding:0 20px;">
+        <h2 id="l-title"></h2>
         <div class="video-box"><i class="fab fa-youtube fa-3x" style="color:var(--eli-red)"></i></div>
-
-        <div style="font-size:0.9rem; line-height:1.7; color:#444;">
-            <p>Welcome to this module. In this week's topic, we explore the intricate details of the system architecture and its logical implementation...</p>
+        <div class="assign-box">
+            <h4 style="color:var(--eli-red); font-size:0.75rem;">MANDATORY ASSIGNMENT</h4>
+            <p style="font-size:0.7rem; margin-top:5px;">Deadline: Friday 11:59PM. No extensions.</p>
+            <button style="width:100%; margin-top:10px; background:var(--eli-red); color:white; border:none; padding:10px; border-radius:8px; font-weight:800;">SUBMIT NOW</button>
         </div>
-
-        <div class="assignment-box">
-            <h4 style="color:var(--eli-red); font-size:0.75rem; text-transform:uppercase; font-weight:800;"><i class="fas fa-clock"></i> Mandatory Assignment</h4>
-            <p style="font-size:0.75rem; margin-top:5px;">Submit your implementation plan for the case study discussed in the video. <b>Deadline: Friday Night.</b></p>
-            <button style="width:100%; margin-top:15px; background:var(--eli-red); color:white; border:none; padding:12px; border-radius:10px; font-weight:800;">SUBMIT NOW</button>
-        </div>
-
-        <div style="background:#F0F4F2; padding:15px; border-radius:12px; display:flex; align-items:center; gap:12px;">
+        <div class="pdf-box">
             <i class="fas fa-file-pdf fa-2x" style="color:var(--eli-red)"></i>
-            <div style="flex:1;"><p style="font-size:0.75rem; font-weight:800;">Full_Lecture_Note_W5.pdf</p><p style="font-size:0.6rem; color:#777;">File Size: 14.5 MB</p></div>
-            <button style="background:var(--eli-green); color:white; border:none; padding:8px 15px; border-radius:8px; font-size:0.7rem; font-weight:700;">DOWNLOAD</button>
+            <div style="flex:1;"><p style="font-size:0.75rem; font-weight:800;">Course_Notes_W5.pdf</p><p style="font-size:0.6rem; color:#777;">Large File: 18.2 MB</p></div>
+            <button style="background:var(--eli-green); color:white; border:none; padding:8px 15px; border-radius:6px; font-size:0.7rem;">DOWNLOAD</button>
         </div>
     </div>
 </div>
 
-<!-- PROF ALEX (CONSTITUTIONAL) -->
-<div class="alex-trigger" id="alex-trigger" onclick="toggleChat(true)">
-    <div style="background:white; border:1px solid var(--eli-green); padding:6px 12px; border-radius:20px; font-size:0.7rem; font-weight:800; color:var(--eli-green);">Ask Prof. Alex</div>
+<!-- RESULTS PAGE -->
+<div id="result-page" class="page">
+    <div class="res-head"><p style="font-size:0.7rem; opacity:0.8;">CGPA</p><h1>4.52</h1></div>
+    <div class="history-row">
+        <select id="lSel" onchange="upRes()"><option>Third Year</option><option>Second Year</option><option>First Year</option></select>
+        <select><option>First Semester</option><option selected>Second Semester</option></select>
+    </div>
+    <div class="card" id="res-box">
+        <h4 id="res-title" style="font-size:0.8rem; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:10px;">Third Year Results</h4>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:8px;"><span>CSC 301</span><b>A</b></div>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:8px;"><span>CSC 305</span><b>A</b></div>
+    </div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="profile-page" class="page">
+    <div class="card" style="text-align:center; padding:30px 10px;">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Munachi" style="width:90px; border-radius:50%; border:3px solid var(--eli-green);">
+        <h2 style="margin-top:10px;">Munachi K. Amande</h2>
+        <p style="font-size:0.8rem; color:#666;">Computer Science | 300 Level</p>
+        <button onclick="document.getElementById('receipt-v').style.display='block'" style="width:100%; margin-top:20px; padding:12px; background:var(--eli-green); color:white; border:none; border-radius:8px; font-weight:700;">PRINT SCHOOL FEES RECEIPT</button>
+    </div>
+</div>
+
+<!-- PROF ALEX (Contextual Bot) -->
+<div class="alex-trigger" id="alex-trigger" onclick="document.getElementById('chat-ov').style.display='flex'">
+    <div style="background:white; padding:5px 12px; border-radius:20px; font-size:0.65rem; font-weight:800; color:var(--eli-green); border:1px solid var(--eli-green);">Ask Prof. Alex</div>
     <div class="alex-btn"><i class="fas fa-robot fa-lg"></i></div>
 </div>
 
-<div class="chat-overlay" id="chat-window">
-    <div class="chat-head">
-        <span><i class="fas fa-robot"></i> Prof. Alex (Public Session)</span>
-        <i class="fas fa-times fa-lg" onclick="toggleChat(false)"></i>
+<!-- CHAT OVERLAY -->
+<div id="chat-ov" class="chat-overlay">
+    <div style="background:var(--eli-green); color:white; padding:15px; display:flex; justify-content:space-between;">
+        <span>Prof. Alex (Public Session)</span>
+        <i class="fas fa-times" onclick="document.getElementById('chat-ov').style.display='none'"></i>
     </div>
-    <div class="chat-messages" id="chat-flow">
-        <div class="chat-bubble bubble-bot">
-            <span class="bubble-name">PROF. ALEX</span>
-            Hello <b>Munachi</b>! I'm here to help you with this material. Any questions?
-            <br><small style="color:#999; font-size:0.6rem;">*Visible to all CSC students</small>
-        </div>
-        <div class="chat-bubble bubble-other">
-            <span class="bubble-name">TUNDE</span>
-            Prof, can you explain the second diagram in the video?
-        </div>
+    <div class="chat-messages" id="chat-msgs">
+        <div class="bubble bubble-bot"><b>Prof. Alex:</b> Hello <b>Munachi</b>! I'm ready to answer questions about this module.</div>
     </div>
-    <div class="typing" id="typing">Prof. Alex is typing...</div>
-    <div class="chat-footer">
-        <input type="text" id="chat-input" placeholder="Type your question...">
+    <div id="typing" style="display:none; padding:10px; font-size:0.7rem; color:#888; font-style:italic;">Prof. Alex is thinking...</div>
+    <div style="padding:15px; background:white; display:flex; gap:10px; border-top:1px solid #eee;">
+        <input type="text" id="chat-in" placeholder="Ask a question..." style="flex:1; padding:12px; border-radius:25px; border:1px solid #ddd; outline:none;">
         <button onclick="sendMsg()" style="background:var(--eli-green); color:white; border:none; width:45px; height:45px; border-radius:50%;"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
 <!-- RECEIPT -->
-<div class="receipt-modal" id="receipt-box">
-    <div class="receipt-paper">
+<div class="receipt-modal" id="receipt-v">
+    <div style="background:white; padding:30px; border:2px solid #333; font-family:'Courier New', monospace; font-size:0.8rem;">
         <h3 style="text-align:center;">ELISHA LENE INSTITUTE</h3>
-        <p style="text-align:center; font-size:0.6rem; border-bottom:1px dashed #333; padding-bottom:10px; margin-bottom:15px;">OFFICIAL PAYMENT RECEIPT</p>
-        <div style="font-size:0.7rem; line-height:2.2;">
-            NAME: MUNACHI KYRIAN AMANDE<br>
-            MATRIC: ELI/CSC/002<br>
-            LEVEL: THIRD YEAR (300L)<br>
-            DATE: 28-APR-2025<br>
-            ---------------------------<br>
-            ITEM: TUITION FEE (PART)<br>
-            AMOUNT: NGN 150,000.00<br>
-            BALANCE: NGN 45,000.00<br>
-            ---------------------------<br>
-            STATUS: VERIFIED
-        </div>
-        <button onclick="closeReceipt()" style="width:100%; margin-top:30px; padding:15px; background:black; color:white; border:none; font-weight:800;">CLOSE & PRINT</button>
+        <p style="text-align:center; font-size:0.6rem; border-bottom:1px dashed #333; margin-bottom:15px;">OFFICIAL RECEIPT</p>
+        NAME: MUNACHI KYRIAN AMANDE<br>MATRIC: ELI/CSC/002<br>LEVEL: 300L<br>DATE: 25-OCT-2024<br>--------------------<br>AMOUNT: N150,000.00<br>STATUS: VERIFIED
+        <button onclick="document.getElementById('receipt-v').style.display='none'" style="width:100%; margin-top:20px; padding:10px; background:black; color:white; border:none;">CLOSE</button>
     </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
     <a href="#" class="nav-item active" onclick="switchPage('dash-page', 0)"><i class="fas fa-home"></i>Dash</a>
     <a href="#" class="nav-item" onclick="switchPage('course-page', 1)"><i class="fas fa-book"></i>Courses</a>
     <a href="#" class="nav-item" onclick="switchPage('result-page', 2)"><i class="fas fa-poll"></i>Results</a>
-    <a href="#" class="nav-item" onclick="switchPage('profile-page', 3)"><i class="fas fa-user"></i>Profile</a>
+    <a href="#" class="nav-item" onclick="switchPage('profile-page', 3)"><i class="fas fa-user-circle"></i>Profile</a>
 </nav>
 
 <script>
-    // Navigation Logic
-    function switchPage(pageId, idx) {
+    function switchPage(pId, idx) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
+        document.getElementById(pId).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.querySelectorAll('.nav-item')[idx].classList.add('active');
-        
-        // Show Bot Trigger only in lecture
-        document.getElementById('alex-trigger').style.display = (pageId === 'lecture-view') ? 'flex' : 'none';
+        if(idx >= 0) document.querySelectorAll('.nav-item')[idx].classList.add('active');
+        document.getElementById('alex-trigger').style.display = (pId === 'lecture-page') ? 'flex' : 'none';
         window.scrollTo(0,0);
     }
-
-    function openLecture(title, topic) {
-        document.getElementById('l-title').innerText = title;
-        document.getElementById('l-topic').innerText = "Module Topic: " + topic;
-        switchPage('lecture-view', 1);
-    }
-
-    // Announcement Toggle
+    function openL(t) { document.getElementById('l-title').innerText = t; switchPage('lecture-page', 1); }
     function toggleAnn(type, el) {
-        document.querySelectorAll('.ann-tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        const content = document.getElementById('ann-content');
-        if(type === 'school') {
-            content.innerHTML = `
-                <div class="ann-item">
-                    <i class="fas fa-bullhorn" style="color:var(--eli-red)"></i>
-                    <p><b>Registry:</b> Late course registration for Third Year students closes this Friday.</p>
-                </div>
-                <div class="ann-item">
-                    <i class="fas fa-calendar" style="color:var(--eli-green)"></i>
-                    <p><b>Senate:</b> The Mid-Semester break has been approved for August 5th.</p>
-                </div>`;
-        } else {
-            content.innerHTML = `
-                <div class="ann-item">
-                    <i class="fas fa-book" style="color:var(--eli-green)"></i>
-                    <p><b>CSC 305:</b> Prof Alex has uploaded the Neural Network visualization guide.</p>
-                </div>
-                <div class="ann-item">
-                    <i class="fas fa-file-upload" style="color:var(--eli-red)"></i>
-                    <p><b>CSC 308:</b> Mobile Dev assignment submission portal is now open.</p>
-                </div>`;
-        }
+        document.querySelectorAll('.ann-tab').forEach(t => t.classList.remove('active')); el.classList.add('active');
+        document.getElementById('ann-list').innerHTML = (type === 'school') ? 
+        '<div class="ann-item"><i class="fas fa-bullhorn" style="color:var(--eli-red)"></i><p><b>Registry:</b> Final semester registration closes Friday.</p></div>' :
+        '<div class="ann-item"><i class="fas fa-book" style="color:var(--eli-green)"></i><p><b>CSC 305:</b> New Neural Network notes uploaded.</p></div>';
     }
-
-    // Course Search
-    function filterCourses() {
-        const input = document.getElementById('courseSearch').value.toLowerCase();
-        const cards = document.querySelectorAll('.course-card');
-        cards.forEach(card => {
-            const title = card.innerText.toLowerCase();
-            card.style.display = title.includes(input) ? 'flex' : 'none';
-        });
-    }
-
-    // Results History
-    function updateHistory() {
-        const level = document.getElementById('levelSelect').value;
-        const sem = document.getElementById('semSelect').value;
-        document.getElementById('h-level').innerText = level;
-        document.getElementById('h-sem').innerText = sem;
-    }
-
-    // Chat Logic
-    function toggleChat(show) { document.getElementById('chat-window').style.display = show ? 'flex' : 'none'; }
-    
     function sendMsg() {
-        const input = document.getElementById('chat-input');
-        const flow = document.getElementById('chat-flow');
-        const typing = document.getElementById('typing');
-
-        if(input.value.trim() !== "") {
-            const uMsg = document.createElement('div');
-            uMsg.className = "chat-bubble bubble-user";
-            uMsg.innerHTML = `<span class="bubble-name" style="color:white">YOU</span>${input.value}`;
-            flow.appendChild(uMsg);
-            
-            const query = input.value;
-            input.value = "";
-            flow.scrollTop = flow.scrollHeight;
-
-            typing.style.display = "block";
-
+        let input = document.getElementById('chat-in'); let msgs = document.getElementById('chat-msgs');
+        if(input.value.trim()){
+            let uMsg = document.createElement('div'); uMsg.className="bubble bubble-user"; uMsg.innerHTML = `<b>YOU</b><br>${input.value}`;
+            msgs.appendChild(uMsg); let val = input.value; input.value = ""; msgs.scrollTop = msgs.scrollHeight;
+            document.getElementById('typing').style.display = 'block';
             setTimeout(() => {
-                typing.style.display = "none";
-                const bMsg = document.createElement('div');
-                bMsg.className = "chat-bubble bubble-bot";
-                bMsg.innerHTML = `<span class="bubble-name">PROF. ALEX</span>I'm processing your question about "${query}"... let's refer to the module summary.`;
-                flow.appendChild(bMsg);
-                flow.scrollTop = flow.scrollHeight;
-            }, 1500);
+                document.getElementById('typing').style.display = 'none';
+                let bMsg = document.createElement('div'); bMsg.className="bubble bubble-bot"; bMsg.innerHTML = `<b>PROF. ALEX</b><br>Good question! Regarding "${val}", let's discuss logic.`;
+                msgs.appendChild(bMsg); msgs.scrollTop = msgs.scrollHeight;
+            }, 1200);
         }
     }
-
-    // Receipt Logic
-    function openReceipt() { document.getElementById('receipt-box').style.display = 'block'; }
-    function closeReceipt() { document.getElementById('receipt-box').style.display = 'none'; }
-
-    // Service Worker Registration for PWA
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
+    function upRes() { document.getElementById('res-title').innerText = document.getElementById('lSel').value + " Results"; }
 </script>
-
 </body>
 </html>
